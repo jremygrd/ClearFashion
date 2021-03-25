@@ -1,0 +1,256 @@
+import Head from 'next/head'
+import React, { useState, useEffect, Component } from "react";
+import styles from '../styles/Home.module.scss'
+import SwitchSelector from "react-switch-selector";
+
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import { IconButton,Checkbox,Button } from '@material-ui/core';
+import { EditorLinearScale } from 'material-ui/svg-icons';
+
+import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import Slider from '@material-ui/core/Slider';
+import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
+
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+
+import Lightbox from 'react-image-lightbox';
+import { OpenInBrowserOutlined } from '@material-ui/icons';
+
+const useStyles = makeStyles({
+  root: {
+    width: 300,
+  },
+});
+
+export default function Home({allProducts}) {
+
+  const [open, isOpen] = React.useState(false);
+  const [photoIndex, setPhotoIndex] =  React.useState(0);
+  // const [images, setImages] = React.useState([]);
+
+  // const openLB = (photo) => {
+  //   console.log(photo)
+  //   setPhotos(photo).then(isOpen(true))
+    
+  // };
+
+  //Slider
+  const classes = useStyles();
+  const [value, setValue] = React.useState([20, 37]);
+
+  const handleChangeSlider = (event, newValue) => {
+    setValue(newValue);
+  };
+
+
+  //Data
+  let allProductsMerged = allProducts.products[0].concat( allProducts.products[1]).concat( allProducts.products[2])
+  const [allFavs, setAllFavs] = useState([]);
+
+
+  //Toggle switch
+  const options = [
+    {
+        label: <span>All</span>,
+        value: {
+             foo: true
+        },
+        selectedBackgroundColor: "#eeeeee",
+    },
+    {
+      label: <span>Dedicated</span>,
+      value: {
+           foo: true
+      },
+      selectedBackgroundColor: "#eeeeee",
+    },
+    {
+      label: <span>Adresse Paris</span>,
+      value: {
+           foo: true
+      },
+      selectedBackgroundColor: "#eeeeee",
+    },
+    {
+      label: <span>Mudjeans</span>,
+        value: "bar",
+        selectedBackgroundColor: "#eeeeee"
+    }
+ ];
+ const onChangeSwitch = (newValue) => {
+  console.log(newValue);
+};
+
+
+ function handleCheckFav(e,id) {
+  let temp = [...allFavs]
+
+  if(allFavs.includes(id)){
+    temp = temp.filter(n => n != id)
+  }
+  else{
+    temp.push(id);
+  }
+  
+  setAllFavs(temp);
+};
+
+  
+
+
+  return (
+    <div className={styles.container}>
+      <Head>
+        <title>Create Next App</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <main className={styles.main}>
+        <h1 className={styles.title}>
+          Welcome to <a href="https://nextjs.org">Next.js!</a>
+        </h1>
+
+        <p className={styles.description}>
+          Get started by editing{' '}
+          <code className={styles.code}>pages/index.js</code>
+        </p>
+
+        <div className = {styles.fixedbutton}></div>
+
+
+        <div style={{width:"100%",height: "2rem"}}>
+        <SwitchSelector
+            onChange={onChangeSwitch}
+            options={options}
+            initialSelectedIndex={0}
+            backgroundColor={"#c7c7c7"}
+            fontColor={"#f5f6fa"}
+        />
+        </div>
+
+      
+      <div className = "wrapper">
+      
+      <div className = "mydiv-22">
+
+      <div className="wrapper" style={{ float: 'right', flexWrap:'nowrap',marginTop:"2rem",alignItems:"center"}}>
+      <div style={{marginBottom:"10px",borderRadius:"8px", marginRight:"2rem", backgroundColor:'#eeeeee', padding:"5px"}}>{value[0]}€ to {value[1]}€</div>
+      <div className={classes.root} > 
+      <Slider
+        value={value}
+        onChange={handleChangeSlider}
+        valueLabelDisplay="auto"
+        aria-labelledby="range-slider"
+        max={500}
+      />
+      </div>
+      </div>
+      </div>
+
+
+    </div>
+
+        <ToggleButtonGroup size="medium">
+          <ToggleButton value="left">
+            <ArrowDownwardIcon />
+          </ToggleButton>
+          <ToggleButton value="center">
+            <ArrowUpwardIcon />
+          </ToggleButton>
+        </ToggleButtonGroup>
+
+        <div className={styles.grid}>
+
+        {
+          allProductsMerged.map(({name,id,price,link,photo})=>(
+            <div className={styles.card} key = {id}>
+            {/* <div onClick={(photo) => openLB(photo)}> */}
+             <img src = {photo[0]} > </img> 
+            {/* </div> */}
+
+            <h3>{name} </h3>
+            <div className = {styles.priceUp}> {price} €
+            
+            
+            </div>
+            <div className = {styles.photosUp}>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              className={classes.button}
+              startIcon={<PhotoCameraIcon />}
+            >
+              {photo.length}
+            </Button>
+            </div>
+
+            <Checkbox style = {{position:"absolute", right:"0",top:"0" }}
+                icon={<FavoriteBorderIcon fontSize="large"/>} 
+                checkedIcon={<FavoriteIcon fontSize="large"/>} 
+                name="checkedH" 
+                checked = {allFavs.includes(id)}
+                onChange={(e) => handleCheckFav(e,id)}
+                />
+          </div>
+          ))
+        }
+
+
+       
+        </div>
+      </main>
+
+      <footer className={styles.footer}>
+        <a
+          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Powered by{' '}
+          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
+        </a>
+      </footer>
+
+
+      {/* {isOpen && (
+          <Lightbox
+            mainSrc={images[photoIndex]}
+            nextSrc={images[(photoIndex + 1) % images.length]}
+            prevSrc={images[(photoIndex + images.length - 1) % images.length]}
+            onCloseRequest={() => isOpen(false)}
+            onMovePrevRequest={() =>
+              setImages(
+                (photoIndex + images.length - 1) % images.length,
+                )
+              
+            }
+            onMoveNextRequest={() =>
+              setImages(
+                (photoIndex + 1) % images.length
+                )
+            }
+          />
+        )} */}
+
+    </div>
+  )
+}
+
+
+
+export async function getServerSideProps() {
+  const products = await fetch ("http://localhost:3000/api/products"); //à remplacer par findAllOfUser selon les tables du genre User_Rights
+  const allProducts = await products.json();
+
+  return {
+    props: {
+      allProducts
+    }
+  }
+}
